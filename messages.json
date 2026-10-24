@@ -1,0 +1,21 @@
+{
+  "_help": "The words in the Tidy up panel. Use {n} for a count and {list} for names. 'one|many' picks singular or plural.",
+  "overlap":  {"level": "review", "title": "{n} {label} overlap",
+               "why": "{list}. Claude may pick any of them. Keep the ones you name on purpose."},
+  "unused":   {"level": "trim", "title": "{n} skill never used|{n} skills never used",
+               "why": "{list}. Remove what you do not recognise. Keep ones that wait for a later job. Fewer skills also shortens the list Claude reads every turn."},
+  "stale":    {"level": "trim", "title": "{n} skill quiet for {days}+ days|{n} skills quiet for {days}+ days",
+               "why": "{list}."},
+  "deadAgents": {"level": "trim", "title": "{n} agent never called|{n} agents never called",
+               "why": "{list}."},
+  "pluginsOff": {"level": "trim", "title": "{n} plugin off and never used|{n} plugins off and never used",
+               "why": "{list}. Safe to uninstall."},
+  "twins":    {"level": "review", "title": "{n} skill exists twice|{n} skills exist twice",
+               "why": "{list}. The project copy can drift from the global one. Keep one."},
+  "unknown":  {"level": "info", "title": "{n} skill with no known source|{n} skills with no known source",
+               "why": "{list}. Add them under \"sources\" in {config}."},
+  "longList": {"level": "trim", "title": "The skill list is long",
+               "why": "About {tokens} tokens of skill text are listed to Claude each turn. Fewer skills means better picks."},
+  "workhorse": {"level": "good", "title": "Your workhorse: {name}",
+               "why": "Used {uses} times. Worth keeping sharp."}
+}

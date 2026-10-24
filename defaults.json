@@ -1,0 +1,18 @@
+{
+  "_help": "Built-in defaults. Override any of these in ~/.claude/skillboard/config.json (same names).",
+  "thresholds": {
+    "newDays": 3,
+    "staleDays": 90,
+    "longListChars": 12000,
+    "overlapMin": 3,
+    "githubCacheHours": 12,
+    "githubPicks": 5,
+    "listNames": 12
+  },
+  "pluginOrigins": {
+    "inline": "Claude app",
+    "builtin": "Claude Code",
+    "skills-dir": "Your skills folder"
+  },
+  "overlapGroups": {}
+}

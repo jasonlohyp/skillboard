@@ -1,0 +1,49 @@
+[
+ {
+  "repo": "anthropics/skills",
+  "why": "Anthropic's own skills: documents, slides, design",
+  "tags": [
+   "pdf",
+   "docx",
+   "slides",
+   "document"
+  ]
+ },
+ {
+  "repo": "obra/superpowers",
+  "why": "Process skills: brainstorming, plans, TDD, debugging",
+  "tags": [
+   "brainstorm",
+   "debug",
+   "plan",
+   "test"
+  ]
+ },
+ {
+  "repo": "wshobson/agents",
+  "why": "A large library of ready-made agents and plugins",
+  "tags": [
+   "agent",
+   "review",
+   "architect"
+  ]
+ },
+ {
+  "repo": "VoltAgent/awesome-claude-code-subagents",
+  "why": "A catalog of 100+ subagents",
+  "tags": [
+   "agent",
+   "reviewer",
+   "subagent"
+  ]
+ },
+ {
+  "repo": "affaan-m/everything-claude-code",
+  "why": "Agents, skills and hooks for daily coding",
+  "tags": [
+   "hook",
+   "agent",
+   "workflow"
+  ]
+ }
+]

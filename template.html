@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Skillboard</title>
+<style>
+:root{
+  --bg:#f5f6f9; --panel:#ffffff; --line:#e4e7ee; --text:#161a24; --mute:#677086; --faint:#9aa2b5;
+  --accent:#3a56f5; --accent-soft:#e8ecff;
+  --skill:#3a56f5; --agent:#8a4fe8; --plugin:#0f9d8a; --tool:#d98a12;
+  --good:#12805c; --warn:#b4570e; --bar:#dfe4f5;
+  --head:ui-rounded,"Segoe UI Variable Display","SF Pro Rounded",system-ui,sans-serif;
+  --body:ui-sans-serif,system-ui,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1017; --panel:#151a24; --line:#232a38; --text:#e8ebf3; --mute:#8d97ad; --faint:#5f6a82;
+    --accent:#8aa0ff; --accent-soft:#1d2540; --skill:#8aa0ff; --agent:#b995ff; --plugin:#4cd1bc; --tool:#f0b44c;
+    --good:#4cd1a0; --warn:#f0a15a; --bar:#27304a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1017; --panel:#151a24; --line:#232a38; --text:#e8ebf3; --mute:#8d97ad; --faint:#5f6a82;
+  --accent:#8aa0ff; --accent-soft:#1d2540; --skill:#8aa0ff; --agent:#b995ff; --plugin:#4cd1bc; --tool:#f0b44c;
+  --good:#4cd1a0; --warn:#f0a15a; --bar:#27304a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 var(--body)}
+.wrap{max-width:1180px;margin:0 auto;padding:32px 16px 64px}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+h1{font:700 28px/1.1 var(--head);margin:0;letter-spacing:-.01em}
+.meta{color:var(--mute);font-size:13px;margin-top:6px}
+.theme{background:none;border:1px solid var(--line);border-radius:99px;padding:6px 12px;color:var(--mute);font-size:13px}
+.lede{font:500 clamp(22px,3.2vw,32px)/1.25 var(--head);margin:28px 0 24px;max-width:26em;letter-spacing:-.01em}
+.lede b{font-weight:700}
+.lede .k{color:var(--accent)}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.stat .n{font:700 30px/1 var(--head)}
+.stat .l{display:flex;align-items:center;gap:8px;color:var(--mute);font-size:13px;margin-top:8px}
+.dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--faint)}
+.dot.skill{background:var(--skill)} .dot.agent{background:var(--agent)} .dot.plugin{background:var(--plugin)} .dot.tool{background:var(--tool)}
+.stat .u{font-size:12px;color:var(--faint);margin-top:2px}
+
+.cols{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(0,1fr);gap:28px;align-items:start}
+section{margin-bottom:32px}
+h2{font:700 18px/1.2 var(--head);margin:0 0 4px}
+.sub{color:var(--mute);font-size:13px;margin:0 0 14px}
+
+.tabs{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap}
+.tab{background:none;border:1px solid transparent;border-radius:99px;padding:5px 12px;color:var(--mute);font-size:14px}
+.tab[aria-selected="true"]{background:var(--accent-soft);color:var(--accent);border-color:transparent;font-weight:600}
+.ledger{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:6px 16px}
+.row{display:grid;grid-template-columns:minmax(0,200px) 1fr 52px;align-items:center;gap:14px;padding:9px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.row .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.row .bar{height:8px;border-radius:99px;background:var(--bar);overflow:hidden}
+.row .bar i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+.row .ct{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.more{background:none;border:0;color:var(--accent);padding:10px 0 6px;font-size:14px}
+.empty{color:var(--mute);padding:14px 0}
+
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+input[type=search],select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit}
+input[type=search]{flex:1;min-width:180px}
+.list{background:var(--panel);border:1px solid var(--line);border-radius:14px}
+details.it{border-bottom:1px solid var(--line)}
+details.it:last-child{border-bottom:0}
+details.it>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 16px}
+details.it>summary::-webkit-details-marker{display:none}
+details.it>summary:hover{background:color-mix(in srgb,var(--accent) 5%,transparent)}
+.it .nm{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.it .nm small{color:var(--faint);font-weight:400;margin-left:8px}
+.it .rt{color:var(--mute);font-size:13px;white-space:nowrap}
+.it .rt .flag{color:var(--warn);font-weight:600}
+.it .body{padding:0 16px 16px 42px;color:var(--mute);font-size:14px}
+.it .body p{margin:0 0 10px;color:var(--text)}
+.kv{display:grid;grid-template-columns:90px 1fr;gap:4px 12px;font-size:13px}
+.kv dt{color:var(--faint)} .kv dd{margin:0;word-break:break-all}
+a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+.chip{display:inline-block;background:var(--accent-soft);color:var(--accent);border-radius:99px;padding:1px 10px;margin:0 4px 4px 0;font-size:12.5px}
+code{font:12.5px ui-monospace,Consolas,monospace;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:var(--text)}
+.wm{padding:11px 16px;border-bottom:1px solid var(--line)}.wm:last-child{border-bottom:0}
+.wm .say{font-weight:600}.wm .do{color:var(--mute);font-size:13.5px;margin-top:2px}.wm .sc{margin-left:8px;color:var(--faint);font-size:12px}
+.copy{background:none;border:1px solid var(--line);border-radius:6px;padding:1px 8px;font-size:12px;color:var(--mute);margin-left:6px}
+
+.tip{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;border-left:4px solid var(--faint)}
+.tip.trim{border-left-color:var(--warn)} .tip.review{border-left-color:var(--agent)} .tip.good{border-left-color:var(--good)} .tip.info{border-left-color:var(--accent)}
+.tip.info{margin-bottom:10px}
+.tip h3{font:600 15px/1.3 var(--body);margin:0 0 4px}
+.tip p{margin:0;color:var(--mute);font-size:13.5px}
+.gh{display:block;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;color:inherit}
+.gh:hover{border-color:var(--accent);text-decoration:none}
+.gh .top{display:flex;justify-content:space-between;gap:8px;font-weight:600;word-break:break-all}
+.gh .st{color:var(--tool);white-space:nowrap;font-variant-numeric:tabular-nums}
+.gh p{margin:4px 0 6px;color:var(--mute);font-size:13.5px}
+.gh .why{font-size:12px;color:var(--accent)}
+.note{color:var(--faint);font-size:12px;margin:4px 0 0}
+
+details.glos{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:2px 16px}
+details.glos summary{cursor:pointer;padding:12px 0;font-weight:600;list-style:none}
+details.glos summary::-webkit-details-marker{display:none}
+details.glos summary::after{content:"+";float:right;color:var(--mute)}
+details.glos[open] summary::after{content:"−"}
+.glos dl{margin:0 0 12px;font-size:14px}
+.glos dt{font-weight:600;margin-top:10px;display:flex;align-items:center;gap:8px}
+.glos dd{margin:2px 0 0 17px;color:var(--mute)}
+
+@media (max-width:900px){.cols{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.row{grid-template-columns:110px 1fr 40px;gap:8px}.it .rt{display:none}}
+@media (prefers-reduced-motion:no-preference){.row .bar i{animation:grow .6s ease-out}@keyframes grow{from{width:0!important}}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Skillboard</h1>
+      <div class="meta" id="meta"></div>
+    </div>
+    <button class="theme" id="theme" aria-label="Switch light or dark">Light / dark</button>
+  </header>
+
+  <p class="lede" id="lede"></p>
+  <div class="stats" id="stats"></div>
+
+  <div class="cols">
+    <main>
+      <section>
+        <h2>How you use it</h2>
+        <p class="sub" id="usub"></p>
+        <div class="tabs" role="tablist" id="tabs"></div>
+        <div class="ledger" id="ledger"></div>
+      </section>
+
+      <section>
+        <h2>Everything you have</h2>
+        <p class="sub">Click a row for the full story.</p>
+        <div class="tools">
+          <input type="search" id="q" placeholder="Search" aria-label="Search">
+          <select id="fk" aria-label="Type"></select>
+          <select id="fs" aria-label="Where it works"></select>
+          <select id="fsrc" aria-label="Source"></select>
+          <select id="fu" aria-label="Use"><option value="">Any use</option><option value="never">Never used</option><option value="used">Used</option></select>
+        </div>
+        <div class="list" id="list"></div>
+      </section>
+    </main>
+
+    <aside>
+      <section>
+        <h2>Tidy up</h2>
+        <p class="sub">What I would change, based on your own use.</p>
+        <div id="recs"></div>
+      </section>
+      <section id="wm-sec">
+        <h2>Your word map</h2>
+        <p class="sub">What Claude does when you say these, from your CLAUDE.md files.</p>
+        <div class="list" id="wm"></div>
+      </section>
+      <section>
+        <h2>Worth a look on GitHub</h2>
+        <p class="sub">Popular, and close to what you build. Stars show fame, not quality.</p>
+        <div id="gh"></div>
+        <p class="note" id="ghnote"></p>
+      </section>
+      <section>
+        <details class="glos">
+          <summary>What is what?</summary>
+          <dl>
+            <dt><span class="dot skill"></span>Skill</dt>
+            <dd>A folder of instructions. Claude reads it when the job matches. Like a recipe card.</dd>
+            <dt><span class="dot agent"></span>Agent</dt>
+            <dd>A helper Claude starts for one job, with its own memory and its own limits. Like hiring a specialist for an hour.</dd>
+            <dt><span class="dot plugin"></span>Plugin</dt>
+            <dd>A box that can hold skills, agents and tools together. You install or switch it off as one piece.</dd>
+            <dt><span class="dot tool"></span>Tool</dt>
+            <dd>Something Claude can do: read a file, run a command, or use a connected app.</dd>
+            <dt>Where it works</dt>
+            <dd>"Every project" lives in your user folder. "Only in …" lives inside one project folder.</dd>
+          </dl>
+        </details>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<script>
+const D = /*DATA*/null;
+const KINDS = {skill:"Skill", agent:"Agent", plugin:"Plugin", tool:"Tool"};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ago = t => { if(!t) return "never"; const d=Math.floor((D.now-t)/864e5); return d<=0?"today":d===1?"yesterday":d<30?d+" days ago":d<365?Math.round(d/30)+" mo ago":"over a year ago"; };
+const where = i => i.scope==="global" ? "Every project" + (i.project ? " (also copied into "+i.project+")" : "") : i.scope==="plugin" ? "With its plugin" : i.scope==="chat" ? "Claude chat (your account)" : "Only in "+i.project;
+const count = k => D.items.filter(i=>i.kind===k && !(k==="skill" && (i.scope==="plugin"||i.scope==="chat")));
+const usedList = k => D.items.filter(i=>i.kind===k);
+
+/* header + headline */
+$("#meta").textContent = "Built " + D.made + " from " + D.sessions + " chat logs on this computer" + (D.chatAsOf ? " · Claude chat skills saved " + D.chatAsOf : "") + (D.demo ? " · DEMO DATA" : "");
+const skills = D.items.filter(i=>i.kind==="skill" && i.scope!=="plugin" && i.scope!=="chat");
+const nPlugin = D.items.filter(i=>i.kind==="skill" && i.scope==="plugin").length;
+const nChat = D.items.filter(i=>i.scope==="chat").length;
+const nAll = skills.length + nPlugin + nChat;
+const unusedSk = skills.filter(i=>!i.uses && !i.new && !i.keep).length;
+const topAll = [...D.items].filter(i=>i.kind==="skill"||i.kind==="agent").sort((a,b)=>b.uses-a.uses)[0];
+$("#lede").innerHTML = `You can reach <b>${nAll} skills</b> and <b>${count("agent").length} agents</b>. Of your <b>${skills.length} own skills</b>, <span class="k">${unusedSk}</span> are unused.` + (topAll ? ` You reach for <b>${esc(topAll.name)}</b> most.` : "");
+
+/* stat strip */
+$("#stats").innerHTML = ["skill","agent","plugin","tool"].map(k=>{
+  const a = count(k), u = a.filter(i=>!i.uses && !i.new && !i.keep).length;
+  return `<div class="stat"><div class="n">${k==="skill"?nAll:a.length}</div><div class="l"><span class="dot ${k}"></span>${KINDS[k]}s</div><div class="u">${k==="skill"?skills.length+" yours · "+nPlugin+" in plugins · "+nChat+" only in chat":(u?u+" never used":"all used")}</div></div>`;
+}).join("");
+
+$("#usub").textContent = "All-time uses in Claude Code since " + D.since + ". Chat on claude.ai is not counted.";
+/* usage ledger */
+let tab = "skill", all = false;
+function ledger(){
+  $("#tabs").innerHTML = ["skill","agent","plugin","tool"].map(k=>`<button class="tab" role="tab" aria-selected="${k===tab}" data-k="${k}">${KINDS[k]}s</button>`).join("");
+  const rows = usedList(tab).filter(i=>i.uses>0).sort((a,b)=>b.uses-a.uses);
+  const max = rows[0]?.uses || 1, shown = all ? rows : rows.slice(0,8);
+  $("#ledger").innerHTML = rows.length ? shown.map(i=>`<div class="row"><span class="nm" title="${esc(i.name)}">${esc(i.name)}</span><span class="bar"><i style="width:${Math.max(2,i.uses/max*100)}%"></i></span><span class="ct">${i.uses.toLocaleString()}</span></div>`).join("")
+    + (rows.length>8 ? `<button class="more" id="more">${all?"Show fewer":"Show all "+rows.length}</button>` : "")
+    : `<div class="empty">No use recorded yet.</div>`;
+  document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{tab=b.dataset.k;all=false;ledger()});
+  const m=$("#more"); if(m) m.onclick=()=>{all=!all;ledger()};
+}
+ledger();
+
+/* inventory */
+$("#fk").innerHTML = `<option value="">All types</option>` + Object.entries(KINDS).map(([k,v])=>`<option value="${k}">${v}s</option>`).join("");
+$("#fs").innerHTML = `<option value="">Anywhere</option><option value="global">Every project</option><option value="chat">Claude chat</option>` + D.projects.map(p=>`<option value="p:${esc(p)}">Only in ${esc(p)}</option>`).join("");
+const sources = [...new Set(D.items.map(i=>i.source).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+$("#fsrc").innerHTML = `<option value="">Any source</option>` + sources.map(x=>`<option>${esc(x)}</option>`).join("");
+function inv(){
+  const q=$("#q").value.toLowerCase(), k=$("#fk").value, s=$("#fs").value, u=$("#fu").value, sr=$("#fsrc").value;
+  const rows = D.items.filter(i=>
+    (!q || (i.name+" "+i.desc).toLowerCase().includes(q)) && (!k || i.kind===k) &&
+    (!s || (s==="chat" ? (i.chat||i.scope==="chat") : s==="global" ? i.scope!=="project" : i.project.split(", ").includes(s.slice(2)))) &&
+    (!sr || i.source===sr) && (!u || (u==="never") === !i.uses)
+  ).sort((a,b)=> a.kind.localeCompare(b.kind) || b.uses-a.uses || a.name.localeCompare(b.name));
+  $("#list").innerHTML = rows.length ? rows.map(i=>`
+    <details class="it"><summary><span class="dot ${i.kind}"></span>
+      <span class="nm">${esc(i.name)}${i.state==="off"?"<small>switched off</small>":""}</span>
+      <span class="rt">${i.uses ? i.uses.toLocaleString()+(i.uses===1?" use":" uses")+" · "+ago(i.last) : i.scope==="chat" ? "chat use not tracked" : i.new ? "new, not used yet" : i.keep ? "kept on purpose" : "<span class='flag'>never used</span>"}</span></summary>
+      <div class="body"><p>${esc(i.desc||"No description.")}</p>
+        <dl class="kv">${i.kind==="skill"||i.kind==="agent"?`<dt>Say</dt><dd>${i.say.length?i.say.map(x=>`<span class="chip">${esc(x)}</span>`).join(" "):esc(i.when||"—")}</dd>${i.say.length&&i.when?`<dt>When</dt><dd>${esc(i.when)}</dd>`:""}<dt>Call it</dt><dd><code>${esc(i.call)}</code></dd>`:""}<dt>Type</dt><dd>${KINDS[i.kind]}</dd><dt>Works in</dt><dd>${esc(where(i))}${i.chat&&i.scope!=="chat"?" and Claude chat":""}</dd>
+        <dt>From</dt><dd>${i.url?`<a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.source)}</a>`:esc(i.source||"—")}${i.source==="Not recorded"?` <span style="color:var(--faint)">· add it under "sources" in config.json: "${esc(i.name)}": ["owner/repo","https://github.com/owner/repo"]</span>`:""}</dd>
+        ${i.path?`<dt>File</dt><dd>${esc(i.path)}<button class="copy" data-p="${esc(i.path)}">Copy</button></dd>`:""}
+        <dt>Total uses</dt><dd>${i.scope==="chat"?"not tracked (chat runs online)":i.uses.toLocaleString()}</dd><dt>Last used</dt><dd>${i.scope==="chat"?"not tracked":ago(i.last)}</dd></dl></div></details>`).join("") : `<div class="empty" style="padding:14px 16px">Nothing matches.</div>`;
+  document.querySelectorAll(".copy").forEach(b=>b.onclick=e=>{e.preventDefault();navigator.clipboard?.writeText(b.dataset.p);b.textContent="Copied"});
+}
+["#q","#fk","#fs","#fsrc","#fu"].forEach(s=>$(s).addEventListener("input",inv)); inv();
+
+/* word map */
+const names = new Set(D.items.map(i=>i.name));
+$("#wm").innerHTML = D.wordmap.length ? D.wordmap.map(w=>`<div class="wm"><div class="say">${esc(w.say)}</div><div class="do">${esc(w.do)}${w.scope!=="Every project"?`<span class="sc">${esc(w.scope)}</span>`:""}</div></div>`).join("") : `<div class="empty" style="padding:14px 16px">No word map yet. Add a table to CLAUDE.md with a header like "Owner says | Do this".</div>`;
+/* tips + github */
+$("#recs").innerHTML = D.recs.length ? D.recs.map(r=>`<div class="tip ${r.level}"><h3>${esc(r.title)}</h3><p>${esc(r.why)}</p></div>`).join("") : `<div class="empty">Nothing to fix. Nice.</div>`;
+$("#gh").innerHTML = D.github.length ? D.github.map(g=>`<a class="gh" href="${esc(g.url)}" target="_blank" rel="noopener"><div class="top"><span>${esc(g.name)}</span><span class="st">★ ${g.stars.toLocaleString()}</span></div><p>${esc(g.desc)}</p><span class="why">${esc(g.why)}</span></a>`).join("") : `<div class="empty">Nothing loaded.</div>`;
+$("#ghnote").textContent = D.ghNote || "";
+
+/* theme */
+const root = document.documentElement;
+try{ const t=localStorage.getItem("sb-theme"); if(t) root.dataset.theme=t; }catch(e){}
+$("#theme").onclick = ()=>{
+  const dark = root.dataset.theme ? root.dataset.theme==="dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+  root.dataset.theme = dark ? "light" : "dark";
+  try{ localStorage.setItem("sb-theme", root.dataset.theme); }catch(e){}
+};
+</script>
+</body>
+</html>

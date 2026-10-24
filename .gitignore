@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+# your own data lives in ~/.claude/skillboard/, but never commit these if you copy them here
+config.json
+chat-skills.json
+github-cache.json
+skillboard.html
+*.local.*
