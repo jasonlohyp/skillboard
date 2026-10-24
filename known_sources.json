@@ -1,1 +1,9 @@
-{}
+{
+  "_help": "Skill name -> [owner/repo, url]. Skills matched here show as 'owner/repo (likely)'. Most people should use config.json instead. This file is for sharing well-known mappings with everyone.",
+  "_example": {
+    "my-skill-name": [
+      "owner/repo",
+      "https://github.com/owner/repo"
+    ]
+  }
+}

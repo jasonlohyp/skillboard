@@ -121,7 +121,7 @@ class Sources:
         self.lock = load_json(HOME / ".agents" / ".skill-lock.json", {}).get("skills", {})
         known = load_json(HERE / "known_sources.json", {})
         # the built-in list matches by skill name only, so it is a good guess, not proof
-        self.known = {n: (v[0] + " (likely)", v[1]) for n, v in known.items()}
+        self.known = {n: (v[0] + " (likely)", v[1]) for n, v in known.items() if not n.startswith("_")}
         self.known.update({n: tuple(v) for n, v in cfg.get("sources", {}).items()})
         self.mine = set(cfg.get("mine", []))
 
@@ -505,7 +505,7 @@ def popular(items, cfg, offline, use_cache=True):
     candidates = cfg.get("githubPicks", candidates)
     lock = load_json(HOME / ".agents" / ".skill-lock.json", {}).get("skills", {})
     known = load_json(HERE / "known_sources.json", {})
-    have = {s.get("source", "").lower() for s in lock.values()} | {v[0].lower() for v in known.values()}
+    have = {s.get("source", "").lower() for s in lock.values()} | {v[0].lower() for n, v in known.items() if not n.startswith("_")}
     have |= {i["source"].lower() for i in items}
     bag = " ".join((i["name"] + " " + i["desc"]).lower() for i in items)
     picks = []

@@ -1,0 +1,36 @@
+{
+  "sources": {
+    "release-notes": [
+      "example/team-skills",
+      "https://github.com/example/team-skills"
+    ]
+  },
+  "keep": [
+    "design-rules"
+  ],
+  "mine": [
+    "release-notes",
+    "weekly-report"
+  ],
+  "overlapGroups": {
+    "Design skills": [
+      "design-rules",
+      "slides",
+      "brand-kit"
+    ]
+  },
+  "thresholds": {
+    "staleDays": 60,
+    "newDays": 7
+  },
+  "githubPicks": [
+    {
+      "repo": "example/cool-skills",
+      "why": "Fits my React work",
+      "tags": [
+        "react",
+        "frontend"
+      ]
+    }
+  ]
+}

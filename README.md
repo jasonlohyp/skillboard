@@ -56,27 +56,56 @@ The only network call is the GitHub lookup, `api.github.com/repos/...`, for star
 
 ## Your settings
 
-Skillboard keeps your own files in `~/.claude/skillboard/`. They never go in this repo.
+Skillboard keeps your own files in `~/.claude/skillboard/`. They never go in this repo. Everything is optional: with no files at all, it still works.
 
-`config.json` (all parts are optional):
+Copy `config.example.json` to `~/.claude/skillboard/config.json` and edit it:
 
 ```json
 {
-  "sources": { "my-skill": ["owner/repo", "https://github.com/owner/repo"] },
-  "keep": ["skill-i-want-to-keep"],
-  "mine": ["skill-i-wrote"],
-  "overlapGroups": { "My group": ["skill-a", "skill-b", "skill-c"] },
-  "githubPicks": [{ "repo": "owner/repo", "why": "Why it fits me", "tags": ["word", "in", "my", "skills"] }]
+  "sources": { "release-notes": ["example/team-skills", "https://github.com/example/team-skills"] },
+  "keep": ["design-rules"],
+  "mine": ["release-notes", "weekly-report"],
+  "overlapGroups": { "Design skills": ["design-rules", "slides", "brand-kit"] },
+  "thresholds": { "staleDays": 60, "newDays": 7 },
+  "githubPicks": [{ "repo": "example/cool-skills", "why": "Fits my React work", "tags": ["react", "frontend"] }]
 }
 ```
 
-- **sources:** tell Skillboard where a skill came from. It also looks for an install record, a repo link in the skill's header and a `.git` folder.
-- **keep:** skills you want to keep, so they never show as "never used".
-- **mine:** skills you wrote. Their source shows "You".
-- **overlapGroups:** sets of skills that do the same job. Skillboard warns when you have three or more from one set.
-- **githubPicks:** your own list for "Worth a look". `tags` are words. Repos whose tags appear in your skills rank first.
+| Key | What it does | Example |
+|---|---|---|
+| `sources` | Says where a skill came from. Use it when the page shows "Not recorded". The first value is `owner/repo`, the second is the link. | `"my-skill": ["owner/repo", "https://github.com/owner/repo"]` |
+| `keep` | Skills you keep on purpose. They never show as "never used". | `["design-rules"]` |
+| `mine` | Skills you wrote. Their source shows "You". | `["weekly-report"]` |
+| `overlapGroups` | Sets of skills that do the same job. You get a warning when you have 3 or more from one set. | `{"Design skills": ["a", "b", "c"]}` |
+| `thresholds` | Your own numbers. See `defaults.json` for every name. | `{"staleDays": 60}` |
+| `githubPicks` | Your own list for "Worth a look". It replaces the built-in list. `tags` are words; repos whose tags appear in your skills rank first. | `[{"repo": "owner/repo", "why": "...", "tags": ["react"]}]` |
 
-`chat-skills.json` holds a saved copy of skills on your claude.ai account. They are not on your computer, so Skillboard cannot read them. `/skillboard` can refresh the copy when Claude has the `ListSkills` tool.
+### The files that come with Skillboard
+
+You do not need to edit these. They are plain lists that anyone can improve with a pull request.
+
+| File | What is in it | Format |
+|---|---|---|
+| `known_sources.json` | Well-known skill names and their repos, shared with everyone. It starts empty. Matches show as `owner/repo (likely)`, because names can clash. | `{"skill-name": ["owner/repo", "https://github.com/owner/repo"]}` |
+| `github_candidates.json` | The repos checked for the "Worth a look" panel. | `[{"repo": "owner/repo", "why": "short reason", "tags": ["word"]}]` |
+| `defaults.json` | The built-in numbers and plugin origin names. Your `config.json` wins. | `{"thresholds": {"staleDays": 90}}` |
+| `messages.json` | The words on every Tidy up card. | `{"unused": {"level": "trim", "title": "{n} skill never used\|{n} skills never used", "why": "{list}."}}` |
+
+### Claude chat skills
+
+Skills on your claude.ai account are not on your computer, so Skillboard cannot read them. Save a copy once in `~/.claude/skillboard/chat-skills.json`:
+
+```json
+{
+  "asOf": "2026-10-24",
+  "skills": [
+    { "name": "travel-planner", "own": true, "desc": "Plan a trip. Use when you say \"plan my trip\"." },
+    { "name": "pdf", "own": false, "desc": "Read, merge and fill PDFs." }
+  ]
+}
+```
+
+`own: true` marks skills you uploaded. The `/skillboard` command writes this file for you when Claude has the `ListSkills` tool.
 
 ## Change the words and numbers
 
